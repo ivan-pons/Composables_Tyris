@@ -19,6 +19,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Composables Tyris"
-include(":PagingLazy")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "ComposablesTyris"
+include(":pagingLazy")
 include(":annotatedstring")
+include(":domain")
+include(":data")
