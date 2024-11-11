@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.composablestyris"
+    namespace = "com.tyris.pagingLazy"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.composablestyris"
+        applicationId = "com.tyris.pagingLazy"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
