@@ -2,6 +2,7 @@ package com.tyris.pagingLazy
 
 import android.app.Application
 import com.tyris.data.di.dataModule
+import com.tyris.pagingLazy.di.presentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -15,9 +16,9 @@ class PagingLazyApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@PagingLazyApp)
-            workManagerFactory()
             modules(
-                dataModule
+                dataModule,
+                presentationModule
             )
         }
     }

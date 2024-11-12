@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.tyris.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
@@ -25,11 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -44,6 +44,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.paging)
+
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
