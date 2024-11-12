@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AnnotatedString</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
 </resources>
