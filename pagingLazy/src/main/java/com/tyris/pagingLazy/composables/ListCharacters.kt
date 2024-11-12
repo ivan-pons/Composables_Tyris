@@ -3,10 +3,8 @@ package com.tyris.pagingLazy.composables
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -24,18 +22,16 @@ import com.tyris.pagingLazy.characters.PageLoader
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun CharacterGrid(
+fun ListGrid(
     characters: StateFlow<PagingData<CharacterBO>>,
     onCharacterClicked: (CharacterBO) -> Unit
 ) {
     val charactersPagingItems: LazyPagingItems<CharacterBO> = characters.collectAsLazyPagingItems()
-    val lazyGridState = rememberLazyGridState()
+    val lazyGridState = rememberLazyListState()
 
-    LazyVerticalGrid(
+    LazyColumn(
         modifier = Modifier.padding(vertical = 16.dp),
-        columns = GridCells.FixedSize(size = 160.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
         state = lazyGridState
     ) {
        items(
@@ -56,7 +52,7 @@ fun CharacterGrid(
         charactersPagingItems.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) { PageLoader(
+                    item() { PageLoader(
                         modifier = Modifier
                             .fillMaxSize()
                     ) }
@@ -64,7 +60,7 @@ fun CharacterGrid(
 
                 loadState.refresh is LoadState.Error -> {
                     val error = charactersPagingItems.loadState.refresh as LoadState.Error
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item() {
                         ErrorMessage(
                             modifier = Modifier.fillMaxSize(),
                             message = error.error.localizedMessage!!,
@@ -73,12 +69,12 @@ fun CharacterGrid(
                 }
 
                 loadState.append is LoadState.Loading -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) { LoadingNextPageItem(modifier = Modifier) }
+                    item() { LoadingNextPageItem(modifier = Modifier) }
                 }
 
                 loadState.append is LoadState.Error -> {
                     val error = charactersPagingItems.loadState.append as LoadState.Error
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item() {
                         ErrorMessage(
                             modifier = Modifier,
                             message = error.error.localizedMessage!!,

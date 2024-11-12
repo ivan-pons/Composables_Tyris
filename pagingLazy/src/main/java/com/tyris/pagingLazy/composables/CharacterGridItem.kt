@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,7 @@ import coil.request.ImageRequest
 import com.tyris.domain.model.CharacterBO
 
 @Composable
-fun CharacterItem(
+fun CharacterGridItem(
     character: CharacterBO,
     onItemClick: () -> Unit,
     size: DpSize,
