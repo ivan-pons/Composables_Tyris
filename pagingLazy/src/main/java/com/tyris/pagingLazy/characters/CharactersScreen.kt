@@ -11,6 +11,7 @@ import androidx.paging.PagingData
 import com.tyris.domain.model.CharacterBO
 import com.tyris.pagingLazy.composables.CharacterGrid
 import com.tyris.pagingLazy.composables.CustomTopAppBar
+import com.tyris.pagingLazy.composables.ListCharacters
 import com.tyris.pagingLazy.ui.theme.ComposablesTyrisTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +48,7 @@ private fun CharactersScreen(
                 .fillMaxSize()
                 .padding(top = padding.calculateTopPadding()),
         ) {
-            CharacterGrid(
+            ListCharacters(
                 characters = state,
                 onCharacterClicked = {
                     onAction(CharactersActions.CharacterClicked(it))

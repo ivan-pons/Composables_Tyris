@@ -2,6 +2,7 @@ package com.tyris.pagingLazy.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,7 +23,7 @@ import com.tyris.pagingLazy.characters.PageLoader
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ListGrid(
+fun ListCharacters(
     characters: StateFlow<PagingData<CharacterBO>>,
     onCharacterClicked: (CharacterBO) -> Unit
 ) {
@@ -30,7 +31,9 @@ fun ListGrid(
     val lazyGridState = rememberLazyListState()
 
     LazyColumn(
-        modifier = Modifier.padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         state = lazyGridState
     ) {
@@ -40,12 +43,12 @@ fun ListGrid(
                charactersPagingItems[it]?.id ?: it
            }){ index ->
            val character = charactersPagingItems[index] ?: return@items
-           CharacterGridItem(
+           CharacterListItem(
                character = character,
                onItemClick = {
                    onCharacterClicked(character)
                },
-               size = DpSize(120.dp, 120.dp)
+               size = DpSize(60.dp, 60.dp)
            )
        }
 
