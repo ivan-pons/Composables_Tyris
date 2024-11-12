@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -21,39 +22,44 @@ import com.tyris.domain.model.CharacterBO
 import com.tyris.pagingLazy.characters.ErrorMessage
 import com.tyris.pagingLazy.characters.LoadingNextPageItem
 import com.tyris.pagingLazy.characters.PageLoader
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun CharacterGrid(
-    characters: StateFlow<PagingData<CharacterBO>>,
-    onCharacterClicked: (CharacterBO) -> Unit
+fun <T: Any> CharacterGrid(
+    elements: StateFlow<PagingData<T>>,
+    content: @Composable (T) -> Unit,
+    columns: GridCells,
+    modifier: Modifier = Modifier,
+    onKey: ((item: T) -> Any)? = null,
+    verticalArrangement: Arrangement. Vertical = Arrangement.spacedBy(8.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
+    searchedQuery: String = ""
 ) {
-    val charactersPagingItems: LazyPagingItems<CharacterBO> = characters.collectAsLazyPagingItems()
+    val elementsPaging: LazyPagingItems<T> = elements.collectAsLazyPagingItems()
     val lazyGridState = rememberLazyGridState()
 
     LazyVerticalGrid(
-        modifier = Modifier.padding(vertical = 16.dp),
-        columns = GridCells.FixedSize(size = 160.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = modifier,
+        columns = columns,
+        verticalArrangement = verticalArrangement,
+        horizontalArrangement = horizontalArrangement,
         state = lazyGridState
     ) {
        items(
-           count = charactersPagingItems.itemCount,
+           count = elementsPaging.itemCount,
            key = {
-               charactersPagingItems[it]?.id ?: it
+               if(onKey != null){
+                   elementsPaging[it]?.let { onKey(it)} ?: it
+               } else {
+                   it
+               }
            }){ index ->
-           val character = charactersPagingItems[index] ?: return@items
-           CharacterGridItem(
-               character = character,
-               onItemClick = {
-                   onCharacterClicked(character)
-               },
-               size = DpSize(120.dp, 120.dp)
-           )
+           val element = elementsPaging[index] ?: return@items
+           content(element)
        }
 
-        charactersPagingItems.apply {
+        elementsPaging.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
                     item(span = { GridItemSpan(maxLineSpan) }) { PageLoader(
@@ -63,7 +69,7 @@ fun CharacterGrid(
                 }
 
                 loadState.refresh is LoadState.Error -> {
-                    val error = charactersPagingItems.loadState.refresh as LoadState.Error
+                    val error = elementsPaging.loadState.refresh as LoadState.Error
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         ErrorMessage(
                             modifier = Modifier.fillMaxSize(),
@@ -77,7 +83,7 @@ fun CharacterGrid(
                 }
 
                 loadState.append is LoadState.Error -> {
-                    val error = charactersPagingItems.loadState.append as LoadState.Error
+                    val error = elementsPaging.loadState.append as LoadState.Error
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         ErrorMessage(
                             modifier = Modifier,
@@ -89,11 +95,7 @@ fun CharacterGrid(
         }
     }
 
-    LaunchedEffect(charactersPagingItems) {
-        snapshotFlow { charactersPagingItems.itemCount }.collect { count ->
-            if (count in 1..30) {
-                lazyGridState.scrollToItem(0)
-            }
-        }
+    LaunchedEffect(searchedQuery, elementsPaging) {
+        lazyGridState.scrollToItem(0)
     }
 }

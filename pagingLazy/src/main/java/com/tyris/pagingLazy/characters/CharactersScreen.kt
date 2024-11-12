@@ -2,16 +2,19 @@ package com.tyris.pagingLazy.characters
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import com.tyris.domain.model.CharacterBO
-import com.tyris.pagingLazy.composables.CharacterGrid
+import com.tyris.pagingLazy.composables.CharacterListItem
 import com.tyris.pagingLazy.composables.CustomTopAppBar
-import com.tyris.pagingLazy.composables.ListCharacters
+import com.tyris.pagingLazy.composables.PagingList
 import com.tyris.pagingLazy.ui.theme.ComposablesTyrisTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,11 +51,23 @@ private fun CharactersScreen(
                 .fillMaxSize()
                 .padding(top = padding.calculateTopPadding()),
         ) {
-            ListCharacters(
-                characters = state,
-                onCharacterClicked = {
-                    onAction(CharactersActions.CharacterClicked(it))
-                }
+            PagingList(
+                elements = state,
+                content = { character ->
+                    CharacterListItem(
+                        character = character,
+                        onItemClick = {
+                            onAction(CharactersActions.CharacterClicked(character))
+                        },
+                        size = DpSize(60.dp, 60.dp)
+                    )
+                },
+                onKey = {
+                    it.id
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             )
         }
     }

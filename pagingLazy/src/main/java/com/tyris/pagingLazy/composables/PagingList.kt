@@ -2,57 +2,57 @@ package com.tyris.pagingLazy.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.tyris.domain.model.CharacterBO
 import com.tyris.pagingLazy.characters.ErrorMessage
 import com.tyris.pagingLazy.characters.LoadingNextPageItem
 import com.tyris.pagingLazy.characters.PageLoader
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun ListCharacters(
-    characters: StateFlow<PagingData<CharacterBO>>,
-    onCharacterClicked: (CharacterBO) -> Unit
+fun <T: Any> PagingList(
+    elements: StateFlow<PagingData<T>>,
+    content: @Composable (T) -> Unit,
+    modifier: Modifier = Modifier,
+    onKey: ((item: T) -> Any)? = null,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    searchedQuery: String = ""
 ) {
-    val charactersPagingItems: LazyPagingItems<CharacterBO> = characters.collectAsLazyPagingItems()
-    val lazyGridState = rememberLazyListState()
+    val elementsPaging: LazyPagingItems<T> = elements.collectAsLazyPagingItems()
+    val lazyListState = rememberLazyListState()
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        state = lazyGridState
+        modifier = modifier,
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment,
+        state = lazyListState
     ) {
        items(
-           count = charactersPagingItems.itemCount,
+           count = elementsPaging.itemCount,
            key = {
-               charactersPagingItems[it]?.id ?: it
-           }){ index ->
-           val character = charactersPagingItems[index] ?: return@items
-           CharacterListItem(
-               character = character,
-               onItemClick = {
-                   onCharacterClicked(character)
-               },
-               size = DpSize(60.dp, 60.dp)
-           )
+               if(onKey != null){
+                   elementsPaging[it]?.let { onKey(it)} ?: it
+               } else {
+                   it
+               }
+           }
+       ){ index ->
+           val element = elementsPaging[index] ?: return@items
+           content(element)
        }
 
-        charactersPagingItems.apply {
+        elementsPaging.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
                     item() { PageLoader(
@@ -62,7 +62,7 @@ fun ListCharacters(
                 }
 
                 loadState.refresh is LoadState.Error -> {
-                    val error = charactersPagingItems.loadState.refresh as LoadState.Error
+                    val error = elementsPaging.loadState.refresh as LoadState.Error
                     item() {
                         ErrorMessage(
                             modifier = Modifier.fillMaxSize(),
@@ -76,7 +76,7 @@ fun ListCharacters(
                 }
 
                 loadState.append is LoadState.Error -> {
-                    val error = charactersPagingItems.loadState.append as LoadState.Error
+                    val error = elementsPaging.loadState.append as LoadState.Error
                     item() {
                         ErrorMessage(
                             modifier = Modifier,
@@ -88,11 +88,7 @@ fun ListCharacters(
         }
     }
 
-    LaunchedEffect(charactersPagingItems) {
-        snapshotFlow { charactersPagingItems.itemCount }.collect { count ->
-            if (count in 1..30) {
-                lazyGridState.scrollToItem(0)
-            }
-        }
+    LaunchedEffect(searchedQuery, elementsPaging) {
+        lazyListState.scrollToItem(0)
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.tyris.pagingLazy.characters.CharactersScreenRoot
+import com.tyris.pagingLazy.search.SearchScreenRoot
 import com.tyris.pagingLazy.ui.theme.ComposablesTyrisTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposablesTyrisTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    CharactersScreenRoot(onCharacterClicked = {})
+                    SearchScreenRoot(onCharacterClicked = {})
                 }
             }
         }
