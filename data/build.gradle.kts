@@ -46,4 +46,5 @@ dependencies {
     implementation(libs.androidx.paging)
 
     implementation(libs.bundles.ktor)
+    implementation(libs.bundles.koin)
 }

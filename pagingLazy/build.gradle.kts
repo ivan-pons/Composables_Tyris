@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation(projects.domain)
+    implementation(projects.data)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -67,4 +68,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.paging.compose)
+
+    implementation(libs.bundles.koin.compose)
 }
