@@ -26,8 +26,7 @@ fun <T: Any> PagingList(
     modifier: Modifier = Modifier,
     onKey: ((item: T) -> Any)? = null,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
-    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    searchedQuery: String = ""
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start
 ) {
     val elementsPaging: LazyPagingItems<T> = elements.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
@@ -88,7 +87,14 @@ fun <T: Any> PagingList(
         }
     }
 
-    LaunchedEffect(searchedQuery, elementsPaging) {
-        lazyListState.scrollToItem(0)
+    LaunchedEffect(key1 = elementsPaging.loadState.refresh) {
+        when(elementsPaging.loadState.refresh){
+            is LoadState.NotLoading -> {
+                lazyListState.scrollToItem(0, scrollOffset = 0)
+            }
+            else -> {
+                //Do nothing
+            }
+        }
     }
 }

@@ -33,8 +33,7 @@ fun <T: Any> CharacterGrid(
     modifier: Modifier = Modifier,
     onKey: ((item: T) -> Any)? = null,
     verticalArrangement: Arrangement. Vertical = Arrangement.spacedBy(8.dp),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround,
-    searchedQuery: String = ""
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceAround
 ) {
     val elementsPaging: LazyPagingItems<T> = elements.collectAsLazyPagingItems()
     val lazyGridState = rememberLazyGridState()
@@ -95,7 +94,14 @@ fun <T: Any> CharacterGrid(
         }
     }
 
-    LaunchedEffect(searchedQuery, elementsPaging) {
-        lazyGridState.scrollToItem(0)
+    LaunchedEffect(key1 = elementsPaging.loadState.refresh) {
+        when(elementsPaging.loadState.refresh){
+            is LoadState.NotLoading -> {
+                lazyGridState.scrollToItem(0, scrollOffset = 0)
+            }
+            else -> {
+                //Do nothing
+            }
+        }
     }
 }
