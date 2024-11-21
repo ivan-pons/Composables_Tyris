@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import com.tyris.domain.model.CharacterBO
-import com.tyris.pagingLazy.composables.CharacterGrid
+import com.tyris.pagingLazy.composables.PagingGrid
 import com.tyris.pagingLazy.composables.CharacterGridItem
 import com.tyris.pagingLazy.composables.SearchToolbar
 import com.tyris.pagingLazy.ui.theme.ComposablesTyrisTheme
@@ -64,7 +64,7 @@ private fun SearchScreen(
                 }
             )
 
-            CharacterGrid(
+            PagingGrid(
                 elements = state,
                 content = {
                     CharacterGridItem(
