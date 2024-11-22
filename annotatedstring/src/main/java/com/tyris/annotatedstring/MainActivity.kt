@@ -35,7 +35,21 @@ class MainActivity : ComponentActivity() {
             ComposablesTyrisTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AnnotatedView(
-                        modifier = Modifier.padding(innerPadding)
+                        text = stringResource(id = R.string.dont_have_an_account) + " ",
+                        clicableText = stringResource(id = R.string.sign_up),
+                        modifier = Modifier.padding(innerPadding),
+                        textStyle = SpanStyle(
+                            fontFamily = Poppins,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                        clicableStyle = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontFamily = Poppins
+                        ),
+                        itemClicked = {
+                            Log.d("AnnotatedString", "Clicked on: ${it}")
+                        }
                     )
                 }
             }
@@ -44,9 +58,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AnnotatedView(modifier: Modifier = Modifier) {
+fun AnnotatedView(
+    text: String,
+    clicableText: String,
+    itemClicked: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    textStyle: SpanStyle = SpanStyle(),
+    clicableStyle: SpanStyle = SpanStyle()
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(vertical = 32.dp)
@@ -54,24 +75,17 @@ fun AnnotatedView(modifier: Modifier = Modifier) {
     ) {
         val annotatedString = buildAnnotatedString {
             withStyle(
-                style = SpanStyle(
-                    fontFamily = Poppins,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                style = textStyle
             ) {
-                append(stringResource(id = R.string.dont_have_an_account) + " ")
+                append(text)
                 pushStringAnnotation(
                     tag = "clickable_text",
-                    annotation = stringResource(id = R.string.sign_up)
+                    annotation = clicableText
                 )
                 withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontFamily = Poppins
-                    )
+                    style = clicableStyle
                 ) {
-                    append(stringResource(id = R.string.sign_up))
+                    append(clicableText)
                 }
             }
         }
@@ -89,7 +103,7 @@ fun AnnotatedView(modifier: Modifier = Modifier) {
                         start = offset,
                         end = offset
                     ).firstOrNull()?.let {
-                        Log.d("AnnotatedString", "Clicked on: ${it.item}")
+                        itemClicked(it.item)
                     }
                 }
             )
